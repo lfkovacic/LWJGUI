@@ -164,18 +164,19 @@ public class Context {
 
 		// Check all hovered nodes to see if no longer hovered
 		for (int i = 0; i < hoveredNodes.size(); i++) {
-			if ( i >= hoveredNodes.size() )
+			if (i >= hoveredNodes.size())
 				continue;
 			Node node = hoveredNodes.get(i);
-			if ( node == null )
+			if (node == null)
 				continue;
-			
+
 			MouseHandler mh = window.getMouseHandler();
 			float mouseX = mh.getX();
 			float mouseY = mh.getY();
 			Bounds rootBounds = node.getNodeBounds();
-			
-			if (mouseX <= rootBounds.getX() || mouseX > rootBounds.getX() + rootBounds.getWidth() || mouseY <= rootBounds.getY() || mouseY > rootBounds.getY() + rootBounds.getHeight()) {
+
+			if (mouseX <= rootBounds.getX() || mouseX > rootBounds.getX() + rootBounds.getWidth()
+					|| mouseY <= rootBounds.getY() || mouseY > rootBounds.getY() + rootBounds.getHeight()) {
 				hoveredNodes.remove(node);
 				node.onMouseExited();
 			}
@@ -459,7 +460,7 @@ public class Context {
 		int fontCallback;
 		try {
 			// Create normal font
-			fontCallback = NanoVG.nvgCreateFontMem(nvgContext, fontName, fontData, 0);
+			fontCallback = NanoVG.nvgCreateFontMemAtIndex(nvgContext, fontName, fontData, 0, 0);
 			fontBuffers.add(fontData);
 
 			// Fallback emoji fonts
@@ -476,9 +477,17 @@ public class Context {
 	}
 
 	private void addFallback(int fontCallback, String name, ByteBuffer fontData) {
-		NanoVG.nvgAddFallbackFontId(nvgContext, fontCallback, NanoVG.nvgCreateFontMem(nvgContext, name, fontData, 0));
+		NanoVG.nvgAddFallbackFontId(
+				nvgContext,
+				fontCallback,
+				NanoVG.nvgCreateFontMemAtIndex(
+						nvgContext,
+						name,
+						fontData,
+						0,
+						0));
 	}
-	
+
 	private static InputStream inputStream(String path) throws IOException {
 		InputStream stream;
 		File file = new File(path);
@@ -489,7 +498,7 @@ public class Context {
 		}
 		return stream;
 	}
-	
+
 	private static byte[] toByteArray(InputStream stream, int bufferSize) {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
