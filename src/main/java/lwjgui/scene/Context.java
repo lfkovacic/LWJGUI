@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -515,7 +516,7 @@ public class Context {
 		}
 		byte[] bytes = toByteArray(stream, bufferSize);
 		data = ByteBuffer.allocateDirect(bytes.length).order(ByteOrder.nativeOrder()).put(bytes);
-		data.flip();
+		((Buffer) data).flip();
 		return data;
 	}
 

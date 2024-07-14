@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.joml.Matrix4f;
@@ -26,14 +27,12 @@ public class GenericShader {
 	protected final int worldMatLoc;
 	private int texId;
 
-
 	private static final Matrix4f IDENTITY_MATRIX = new Matrix4f();
 
 	public GenericShader() {
 		this(
 				Thread.currentThread().getContextClassLoader().getResource("lwjgui/gl/vertex.glsl"),
-				Thread.currentThread().getContextClassLoader().getResource("lwjgui/gl/fragment.glsl")
-			);
+				Thread.currentThread().getContextClassLoader().getResource("lwjgui/gl/fragment.glsl"));
 	}
 
 	public GenericShader(URL vertexShader, URL fragmentShader) {
@@ -46,23 +45,22 @@ public class GenericShader {
 				vertexId,
 				new int[] { fragmentId },
 				new String[] { "inPos", "inTexCoord" },
-				new int[] { posLoc, texCoordLoc }
-				);
+				new int[] { posLoc, texCoordLoc });
 
 		projMatLoc = GL20.glGetUniformLocation(id, "projectionMatrix");
 		viewMatLoc = GL20.glGetUniformLocation(id, "viewMatrix");
 		worldMatLoc = GL20.glGetUniformLocation(id, "worldMatrix");
-		
+
 		// Generic white texture
 		texId = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
 		int wid = 1;
 		int hei = 1;
-		ByteBuffer data = BufferUtils.createByteBuffer(wid*hei*4);
-		while(data.hasRemaining()) {
+		ByteBuffer data = BufferUtils.createByteBuffer(wid * hei * 4);
+		while (data.hasRemaining()) {
 			data.put((byte) (255 & 0xff));
 		}
-		data.flip();
+		((Buffer) data).flip();
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, wid, hei, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
@@ -91,7 +89,7 @@ public class GenericShader {
 		}
 
 		assert (attrs.length == indices.length);
-		for (int i=0; i<attrs.length; i++) {
+		for (int i = 0; i < attrs.length; i++) {
 			GL20.glBindAttribLocation(id, indices[i], attrs[i]);
 		}
 
@@ -117,11 +115,11 @@ public class GenericShader {
 			String st;
 			while ((st = br.readLine()) != null)
 				source += st + "\n";
-			
+
 			br.close();
 			isr.close();
-			in.close();	 
-			
+			in.close();
+
 			return compileShader(source, isVertex);
 		} catch (IOException ex) {
 			throw new RuntimeException("can't compile shader at: " + url, ex);
@@ -138,14 +136,15 @@ public class GenericShader {
 		}
 
 		// try to massage JavaFX shaders into modern OpenGL
-		if (source.startsWith("#ifdef GL_ES\n")) 
+		if (source.startsWith("#ifdef GL_ES\n"))
 			source = modernizeShader(source, isVertex);
-		
+
 		// If ES
-        String glVersion = new String(GL11.glGetString(GL11.GL_VERSION));
-        boolean isOpenGLES = glVersion.contains("OpenGL ES");
-        if ( isOpenGLES )
-        	source = source.replace("#version 330", "#version 300 es\r\nprecision highp float;\r\nprecision highp sampler2DShadow;\r\n");
+		String glVersion = new String(GL11.glGetString(GL11.GL_VERSION));
+		boolean isOpenGLES = glVersion.contains("OpenGL ES");
+		if (isOpenGLES)
+			source = source.replace("#version 330",
+					"#version 300 es\r\nprecision highp float;\r\nprecision highp sampler2DShadow;\r\n");
 
 		int id = GL20.glCreateShader(type);
 		GL20.glShaderSource(id, source);
@@ -165,7 +164,7 @@ public class GenericShader {
 			// show the source with correct line numbering
 			buf.append("\nSOURCE:\n");
 			String[] lines = source.split("\\n");
-			for (int i=0; i<lines.length; i++) {
+			for (int i = 0; i < lines.length; i++) {
 				buf.append(String.format("%4d: ", i + 1));
 				buf.append(lines[i]);
 				buf.append("\n");
@@ -209,6 +208,7 @@ public class GenericShader {
 
 	/**
 	 * Fits the projection around the current contexts size.
+	 * 
 	 * @param context
 	 */
 	public void project(Context context) {
@@ -220,13 +220,14 @@ public class GenericShader {
 
 	/**
 	 * Manually fit the projection.
+	 * 
 	 * @param x
 	 * @param y
 	 * @param w
 	 * @param h
 	 */
 	public void projectOrtho(float x, float y, float w, float h) {
-		setProjectionMatrix(new Matrix4f().ortho(x, x+w, y+h, y, -32000, 32000));
+		setProjectionMatrix(new Matrix4f().ortho(x, x + w, y + h, y, -32000, 32000));
 		setViewMatrix(IDENTITY_MATRIX);
 		setWorldMatrix(IDENTITY_MATRIX);
 	}

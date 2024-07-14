@@ -10,6 +10,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
@@ -134,7 +135,7 @@ public class OpenGLExample extends LWJGUIApplication {
 				buffer.put(+0.0f).put(-0.5f).put(0.0f);		// Vert 3 position
 				buffer.put(new float[] {0.0f, 0.0f});		// Vert 3 texture
 				buffer.put(new float[] {0.0f,0.0f,1.0f,1.0f}); // Vert 3 color
-				buffer.flip();
+				((Buffer) buffer).flip();
 
 				// Generate buffers
 				vbo = glGenBuffers();

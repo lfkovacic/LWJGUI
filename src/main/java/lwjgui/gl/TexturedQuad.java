@@ -16,6 +16,7 @@ import static org.lwjgl.system.MemoryStack.stackMallocFloat;
 import static org.lwjgl.system.MemoryStack.stackPop;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
@@ -67,7 +68,7 @@ public class TexturedQuad {
 			buffer.put(new float[] {x+0, y+h, 0});			// Vert 6 position
 			buffer.put(new float[] {0.0f, 1.0f});			// Vert 6 texture
 			buffer.put(new float[] {1.0f,1.0f,1.0f,1.0f});	// Vert 6 color
-			buffer.flip();
+			((Buffer) buffer).flip();
 
 			// Generate buffers
 			vboId = glGenBuffers();
