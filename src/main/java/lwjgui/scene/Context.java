@@ -460,8 +460,7 @@ public class Context {
 		int fontCallback;
 		try {
 			// Create normal font
-			System.err.println("WTF");
-			fontCallback = NanoVG.nvgCreateFontMem(nvgContext, fontName, fontData, 0);
+			fontCallback = NanoVG.nvgCreateFontMemAtIndex(nvgContext, fontName, fontData, false, 0);
 			fontBuffers.add(fontData);
 
 			// Fallback emoji fonts
@@ -477,16 +476,11 @@ public class Context {
 		}
 	}
 
-	private void addFallback(int fontCallback, String name, ByteBuffer fontData) {
-		System.err.println("WTF");
+	private void addFallback(int fontCallback, String fontName, ByteBuffer fontData) {
 		NanoVG.nvgAddFallbackFontId(
 				nvgContext,
 				fontCallback,
-				NanoVG.nvgCreateFontMem(
-						nvgContext,
-						name,
-						fontData,
-						0));
+				fontCallback = NanoVG.nvgCreateFontMemAtIndex(nvgContext, fontName, fontData, false, 0));
 	}
 
 	private static InputStream inputStream(String path) throws IOException {
