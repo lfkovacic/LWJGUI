@@ -460,7 +460,7 @@ public class Context {
 		int fontCallback;
 		try {
 			// Create normal font
-			fontCallback = NanoVG.nvgCreateFontMemAtIndex(nvgContext, fontName, fontData, 0, 0);
+			fontCallback = NanoVG.nvgCreateFontMem(nvgContext, fontName, fontData, 0);
 			fontBuffers.add(fontData);
 
 			// Fallback emoji fonts
@@ -480,11 +480,10 @@ public class Context {
 		NanoVG.nvgAddFallbackFontId(
 				nvgContext,
 				fontCallback,
-				NanoVG.nvgCreateFontMemAtIndex(
+				NanoVG.nvgCreateFontMem(
 						nvgContext,
 						name,
 						fontData,
-						0,
 						0));
 	}
 
