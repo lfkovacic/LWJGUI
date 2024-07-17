@@ -460,6 +460,7 @@ public class Context {
 		int fontCallback;
 		try {
 			// Create normal font
+			System.err.println("WTF");
 			fontCallback = NanoVG.nvgCreateFontMem(nvgContext, fontName, fontData, 0);
 			fontBuffers.add(fontData);
 
@@ -477,6 +478,7 @@ public class Context {
 	}
 
 	private void addFallback(int fontCallback, String name, ByteBuffer fontData) {
+		System.err.println("WTF");
 		NanoVG.nvgAddFallbackFontId(
 				nvgContext,
 				fontCallback,
